@@ -20,10 +20,20 @@ html,body{width:100%;font-family:'Sarabun',sans-serif;background:#f0f7f4;-webkit
 .sect-title{font-size:11px;font-weight:700;color:#085041;letter-spacing:0.06em;text-transform:uppercase;margin:20px 0 12px;padding-left:8px;border-left:3px solid #1D9E75}
 .sect-title:first-child{margin-top:0}
 .row{background:#fff;border-radius:12px;padding:14px 16px;margin-bottom:10px;box-shadow:0 1px 3px rgba(0,0,0,.06)}
-.row-top{display:flex;justify-content:space-between;align-items:center;margin-bottom:10px}
+.row-top{display:flex;justify-content:space-between;align-items:center;margin-bottom:6px}
 .row-top label{font-size:14px;color:#333;font-weight:600}
 .row-top .val{font-size:15px;font-weight:700;color:#085041;background:#e8f5e9;padding:3px 10px;border-radius:20px}
+.cost-per-km{font-size:11px;color:#888;margin-bottom:8px;text-align:right}
+.cost-per-km span{color:#085041;font-weight:600}
 input[type=range]{width:100%;accent-color:#1D9E75;cursor:pointer;height:6px}
+.compare-box{background:#f0f7f4;border-radius:10px;padding:12px 14px;margin-bottom:16px;border:1px solid #c8e6c9}
+.compare-title{font-size:11px;font-weight:700;color:#085041;margin-bottom:8px;text-transform:uppercase;letter-spacing:0.05em}
+.compare-row{display:flex;justify-content:space-between;align-items:center;margin-bottom:6px}
+.compare-row:last-child{margin-bottom:0}
+.compare-label{font-size:13px;color:#555}
+.compare-val{font-size:13px;font-weight:700;color:#085041}
+.compare-val.cheaper{color:#1D9E75}
+.compare-val.expensive{color:#c0392b}
 .result-big{background:#085041;border-radius:16px;padding:24px 20px;text-align:center;margin-bottom:16px}
 .result-icon{font-size:40px;margin-bottom:8px}
 .result-label{font-size:13px;color:#9fe1cb;margin-bottom:4px}
@@ -43,34 +53,162 @@ input[type=range]{width:100%;accent-color:#1D9E75;cursor:pointer;height:6px}
 .badge{background:#e8f5e9;color:#085041;font-size:11px;font-weight:700;padding:4px 12px;border-radius:20px}
 .footer{text-align:center;font-size:12px;color:#aaa;padding-bottom:24px}
 .footer a{color:#1D9E75;text-decoration:none;font-weight:600}
+.saving-pct{font-size:12px;background:#e8f5e9;color:#085041;border-radius:20px;padding:2px 8px;margin-left:6px;font-weight:700}
 </style>
 </head>
 <body>
 <div class="header"><div class="logo">&#9981;</div><div><div class="brand-name">หงษ์ทอง ออโต้แก๊ส</div><div class="brand-sub">เครื่องคำนวณความคุ้มค่าติดแก๊ส LPG</div></div></div>
 <div class="tabs"><div class="tab active" id="tab1" onclick="switchTab(1)">ปรับข้อมูล</div><div class="tab" id="tab2" onclick="switchTab(2)">ผลลัพธ์</div></div>
+
 <div class="panel active" id="panel1">
-<div class="sect-title">ข้อมูลการขับขี่</div>
-<div class="row"><div class="row-top"><label>ระยะทางต่อวัน</label><span class="val" id="km-out">80 กม.</span></div><input type="range" id="km" min="20" max="300" step="5" value="80" oninput="calc()"></div>
-<div class="row"><div class="row-top"><label>อัตราสิ้นเปลืองน้ำมัน</label><span class="val" id="mpg-out">10.0 กม./ล.</span></div><input type="range" id="mpg" min="6" max="20" step="0.5" value="10" oninput="calc()"></div>
-<div class="row"><div class="row-top"><label>ราคาน้ำมัน</label><span class="val" id="oil-out">42.0 บาท/ล.</span></div><input type="range" id="oil" min="30" max="55" step="0.5" value="42" oninput="calc()"></div>
-<div class="sect-title">ข้อมูลระบบแก๊ส LPG</div>
-<div class="row"><div class="row-top"><label>อัตราสิ้นเปลืองแก๊ส</label><span class="val" id="gpkm-out">9.0 กม./ล.</span></div><input type="range" id="gpkm" min="6" max="18" step="0.5" value="9" oninput="calc()"></div>
-<div class="row"><div class="row-top"><label>ราคาแก๊ส LPG</label><span class="val" id="gas-out">15.0 บาท/ล.</span></div><input type="range" id="gas" min="10" max="25" step="0.5" value="15" oninput="calc()"></div>
-<div class="row"><div class="row-top"><label>ราคาติดตั้ง</label><span class="val" id="cost-out">32,000 บาท</span></div><input type="range" id="cost" min="20000" max="70000" step="500" value="32000" oninput="calc()"></div>
-<button class="calc-btn" onclick="switchTab(2)">ดูผลการคำนวณ &#x2192;</button>
+  <div class="sect-title">ข้อมูลการขับขี่</div>
+  <div class="row">
+    <div class="row-top"><label>ระยะทางต่อวัน</label><span class="val" id="km-out">80 กม.</span></div>
+    <input type="range" id="km" min="20" max="300" step="5" value="80" oninput="calc()">
+  </div>
+
+  <div class="sect-title">น้ำมัน</div>
+  <div class="row">
+    <div class="row-top"><label>อัตราสิ้นเปลือง</label><span class="val" id="mpg-out">10.0 กม./ล.</span></div>
+    <input type="range" id="mpg" min="6" max="20" step="0.5" value="10" oninput="calc()">
+    <div class="cost-per-km">ต้นทุน: <span id="oil-cpkm">—</span> บาท/กม.</div>
+  </div>
+  <div class="row">
+    <div class="row-top"><label>ราคาน้ำมัน</label><span class="val" id="oil-out">42.0 บาท/ล.</span></div>
+    <input type="range" id="oil" min="30" max="55" step="0.5" value="42" oninput="calc()">
+  </div>
+
+  <div class="sect-title">แก๊ส LPG</div>
+  <div class="row">
+    <div class="row-top"><label>อัตราสิ้นเปลือง</label><span class="val" id="gpkm-out">9.0 กม./ล.</span></div>
+    <input type="range" id="gpkm" min="6" max="18" step="0.5" value="9" oninput="calc()">
+    <div class="cost-per-km">ต้นทุน: <span id="gas-cpkm">—</span> บาท/กม.</div>
+  </div>
+  <div class="row">
+    <div class="row-top"><label>ราคาแก๊ส LPG</label><span class="val" id="gas-out">15.0 บาท/ล.</span></div>
+    <input type="range" id="gas" min="10" max="25" step="0.5" value="15" oninput="calc()">
+  </div>
+
+  <div class="compare-box">
+    <div class="compare-title">เปรียบเทียบต้นทุน/กม.</div>
+    <div class="compare-row">
+      <span class="compare-label">น้ำมัน</span>
+      <span class="compare-val expensive" id="cmp-oil">—</span>
+    </div>
+    <div class="compare-row">
+      <span class="compare-label">แก๊ส LPG</span>
+      <span class="compare-val cheaper" id="cmp-gas">—</span>
+    </div>
+    <div class="compare-row" style="border-top:1px solid #c8e6c9;padding-top:8px;margin-top:4px">
+      <span class="compare-label" style="font-weight:700">ประหยัดกว่า</span>
+      <span class="compare-val" id="cmp-save" style="color:#1D9E75;font-size:14px">—</span>
+    </div>
+  </div>
+
+  <div class="row">
+    <div class="row-top"><label>ราคาติดตั้ง</label><span class="val" id="cost-out">32,000 บาท</span></div>
+    <input type="range" id="cost" min="20000" max="70000" step="500" value="32000" oninput="calc()">
+  </div>
+  <button class="calc-btn" onclick="switchTab(2)">ดูผลการคำนวณ &#x2192;</button>
 </div>
+
 <div class="panel" id="panel2">
-<div class="result-big"><div class="result-icon">&#x1F3C6;</div><div class="result-label">คืนทุนภายใน</div><div class="result-val" id="payback">—</div><div class="result-sub" id="payback-sub"></div></div>
-<div class="metrics"><div class="metric"><div class="ml">ค่าน้ำมัน/เดือน</div><div class="mv" id="m-oil">—</div><div class="mu">บาท</div></div><div class="metric"><div class="ml">ค่าแก๊ส/เดือน</div><div class="mv" id="m-gas">—</div><div class="mu">บาท</div></div><div class="metric"><div class="ml">ประหยัด/เดือน</div><div class="mv" id="m-save">—</div><div class="mu">บาท</div></div><div class="metric"><div class="ml">ประหยัด/ปี</div><div class="mv" id="m-year">—</div><div class="mu">บาท</div></div></div>
-<div class="msg-card"><div class="msg-label">ข้อความพร้อมส่งให้เจ้าหน้าที่</div><div class="msg-box" id="msg-box">กำลังคำนวณ...</div></div>
-<button class="btn" onclick="copyMsg(this)">คัดลอกข้อความส่งเจ้าหน้าที่</button>
-<div class="badges"><span class="badge">6 สาขาทั่วประเทศ</span><span class="badge">วิศวกรประจำร้าน</span><span class="badge">ถูกกฎหมาย 100%</span><span class="badge">17 ปี</span></div>
-<div class="footer">สอบถาม: <a href="https://www.hongtonggas.com" target="_blank">hongtonggas.com</a></div>
+  <div class="result-big">
+    <div class="result-icon">&#x1F3C6;</div>
+    <div class="result-label">คืนทุนภายใน</div>
+    <div class="result-val" id="payback">—</div>
+    <div class="result-sub" id="payback-sub"></div>
+  </div>
+  <div class="metrics">
+    <div class="metric"><div class="ml">ค่าน้ำมัน/เดือน</div><div class="mv" id="m-oil">—</div><div class="mu">บาท</div></div>
+    <div class="metric"><div class="ml">ค่าแก๊ส/เดือน</div><div class="mv" id="m-gas">—</div><div class="mu">บาท</div></div>
+    <div class="metric"><div class="ml">ประหยัด/เดือน</div><div class="mv" id="m-save">—</div><div class="mu">บาท</div></div>
+    <div class="metric"><div class="ml">ประหยัด/ปี</div><div class="mv" id="m-year">—</div><div class="mu">บาท</div></div>
+  </div>
+  <div class="compare-box">
+    <div class="compare-title">ต้นทุนต่อกิโลเมตร</div>
+    <div class="compare-row">
+      <span class="compare-label">น้ำมัน</span>
+      <span class="compare-val expensive" id="r-oil-cpkm">—</span>
+    </div>
+    <div class="compare-row">
+      <span class="compare-label">แก๊ส LPG</span>
+      <span class="compare-val cheaper" id="r-gas-cpkm">—</span>
+    </div>
+    <div class="compare-row" style="border-top:1px solid #c8e6c9;padding-top:8px;margin-top:4px">
+      <span class="compare-label" style="font-weight:700">ถูกกว่า</span>
+      <span class="compare-val" id="r-cmp-save" style="color:#1D9E75;font-size:14px">—</span>
+    </div>
+  </div>
+  <div class="msg-card"><div class="msg-label">ข้อความพร้อมส่งให้เจ้าหน้าที่</div><div class="msg-box" id="msg-box">กำลังคำนวณ...</div></div>
+  <button class="btn" onclick="copyMsg(this)">คัดลอกข้อความส่งเจ้าหน้าที่</button>
+  <div class="badges"><span class="badge">6 สาขาทั่วประเทศ</span><span class="badge">วิศวกรประจำร้าน</span><span class="badge">ถูกกฎหมาย 100%</span><span class="badge">17 ปี</span></div>
+  <div class="footer">สอบถาม: <a href="https://www.hongtonggas.com" target="_blank">hongtonggas.com</a></div>
 </div>
+
 <script>
-function fmt(n){return Math.round(n).toLocaleString('th-TH')}
-function switchTab(n){document.querySelectorAll('.tab').forEach((t,i)=>t.classList.toggle('active',i===n-1));document.querySelectorAll('.panel').forEach((p,i)=>p.classList.toggle('active',i===n-1));}
-function calc(){const km=+document.getElementById('km').value,mpg=+document.getElementById('mpg').value,oil=+document.getElementById('oil').value,gpkm=+document.getElementById('gpkm').value,gas=+document.getElementById('gas').value,cost=+document.getElementById('cost').value;document.getElementById('km-out').textContent=km+' กม.';document.getElementById('mpg-out').textContent=mpg.toFixed(1)+' กม./ล.';document.getElementById('oil-out').textContent=oil.toFixed(1)+' บาท/ล.';document.getElementById('gpkm-out').textContent=gpkm.toFixed(1)+' กม./ล.';document.getElementById('gas-out').textContent=gas.toFixed(1)+' บาท/ล.';document.getElementById('cost-out').textContent=fmt(cost)+' บาท';const kmM=km*26,oilC=Math.round((kmM/mpg)*oil),gasC=Math.round((kmM/gpkm)*gas),save=oilC-gasC,saveY=save*12,months=save>0?Math.ceil(cost/save):null;document.getElementById('m-oil').textContent=fmt(oilC);document.getElementById('m-gas').textContent=fmt(gasC);document.getElementById('m-save').textContent=save>0?fmt(save):'0';document.getElementById('m-year').textContent=save>0?fmt(saveY):'0';const pb=document.getElementById('payback'),pbs=document.getElementById('payback-sub');if(!months){pb.textContent='ไม่คุ้มทุน';pbs.textContent='กรุณาตรวจสอบข้อมูล';}else{const y=Math.floor(months/12),m=months%12;pb.textContent=y>0?(y+' ปี '+(m>0?m+' เดือน':'')):months+' เดือน';pbs.textContent='ประหยัด '+fmt(saveY)+' บาท/ปี';}const pbT=months?(Math.floor(months/12)>0?Math.floor(months/12)+'ปี '+(months%12>0?months%12+'เดือน':''):months+' เดือน'):'ไม่คุ้มทุน';document.getElementById('msg-box').textContent=months?'สวัสดีครับ/ค่ะ ลองคำนวณแล้วนะ\n\n- ขับวันละ '+km+' กม.\n- น้ำมัน '+mpg.toFixed(1)+' กม./ล. ราคา '+oil.toFixed(1)+' บาท/ล.\n- แก๊ส '+gpkm.toFixed(1)+' กม./ล. ราคา '+gas.toFixed(1)+' บาท/ล.\n- ราคาติดตั้ง: '+fmt(cost)+' บาท\n\n- ค่าน้ำมันเดิม: '+fmt(oilC)+' บาท/เดือน\n- ค่าแก๊ส: '+fmt(gasC)+' บาท/เดือน\n- ประหยัด: '+fmt(save)+' บาท/เดือน\n- คืนทุน: '+pbT+'\n\nสนใจนัดคิวครับ/ค่ะ':'กรุณาตรวจสอบข้อมูล';}
+function fmt(n,d=2){return (+n).toFixed(d)}
+function fmtB(n){return Math.round(n).toLocaleString('th-TH')}
+function switchTab(n){
+  document.querySelectorAll('.tab').forEach((t,i)=>t.classList.toggle('active',i===n-1));
+  document.querySelectorAll('.panel').forEach((p,i)=>p.classList.toggle('active',i===n-1));
+}
+function calc(){
+  const km=+document.getElementById('km').value,
+        mpg=+document.getElementById('mpg').value,
+        oil=+document.getElementById('oil').value,
+        gpkm=+document.getElementById('gpkm').value,
+        gas=+document.getElementById('gas').value,
+        cost=+document.getElementById('cost').value;
+
+  document.getElementById('km-out').textContent=km+' กม.';
+  document.getElementById('mpg-out').textContent=mpg.toFixed(1)+' กม./ล.';
+  document.getElementById('oil-out').textContent=oil.toFixed(1)+' บาท/ล.';
+  document.getElementById('gpkm-out').textContent=gpkm.toFixed(1)+' กม./ล.';
+  document.getElementById('gas-out').textContent=gas.toFixed(1)+' บาท/ล.';
+  document.getElementById('cost-out').textContent=fmtB(cost)+' บาท';
+
+  const oilCpkm = oil/mpg;
+  const gasCpkm = gas/gpkm;
+  const savePct = ((oilCpkm-gasCpkm)/oilCpkm*100);
+
+  document.getElementById('oil-cpkm').textContent=fmt(oilCpkm);
+  document.getElementById('gas-cpkm').textContent=fmt(gasCpkm);
+  document.getElementById('cmp-oil').textContent=fmt(oilCpkm)+' บาท/กม.';
+  document.getElementById('cmp-gas').textContent=fmt(gasCpkm)+' บาท/กม.';
+  document.getElementById('r-oil-cpkm').textContent=fmt(oilCpkm)+' บาท/กม.';
+  document.getElementById('r-gas-cpkm').textContent=fmt(gasCpkm)+' บาท/กม.';
+
+  const saveText = gasCpkm < oilCpkm
+    ? 'แก๊สถูกกว่า '+fmt(oilCpkm-gasCpkm)+' บาท/กม. ('+Math.round(savePct)+'%)'
+    : 'น้ำมันถูกกว่า';
+  document.getElementById('cmp-save').textContent=saveText;
+  document.getElementById('r-cmp-save').textContent=saveText;
+
+  const kmM=km*26,
+        oilC=Math.round((kmM/mpg)*oil),
+        gasC=Math.round((kmM/gpkm)*gas),
+        save=oilC-gasC,
+        saveY=save*12,
+        months=save>0?Math.ceil(cost/save):null;
+
+  document.getElementById('m-oil').textContent=fmtB(oilC);
+  document.getElementById('m-gas').textContent=fmtB(gasC);
+  document.getElementById('m-save').textContent=save>0?fmtB(save):'0';
+  document.getElementById('m-year').textContent=save>0?fmtB(saveY):'0';
+
+  const pb=document.getElementById('payback'),pbs=document.getElementById('payback-sub');
+  if(!months){pb.textContent='ไม่คุ้มทุน';pbs.textContent='กรุณาตรวจสอบข้อมูล';}
+  else{
+    const y=Math.floor(months/12),m=months%12;
+    pb.textContent=y>0?(y+' ปี '+(m>0?m+' เดือน':'')):months+' เดือน';
+    pbs.textContent='ประหยัด '+fmtB(saveY)+' บาท/ปี';
+  }
+  const pbT=months?(Math.floor(months/12)>0?Math.floor(months/12)+'ปี '+(months%12>0?months%12+'เดือน':''):months+' เดือน'):'ไม่คุ้มทุน';
+  document.getElementById('msg-box').textContent=months
+    ?'สวัสดีครับ/ค่ะ ลองคำนวณแล้วนะ\n\n- ขับวันละ '+km+' กม.\n- น้ำมัน '+mpg.toFixed(1)+' กม./ล. ราคา '+oil.toFixed(1)+' บาท/ล. ('+fmt(oilCpkm)+' บาท/กม.)\n- แก๊ส '+gpkm.toFixed(1)+' กม./ล. ราคา '+gas.toFixed(1)+' บาท/ล. ('+fmt(gasCpkm)+' บาท/กม.)\n- แก๊สถูกกว่าน้ำมัน '+Math.round(savePct)+'%\n- ราคาติดตั้ง: '+fmtB(cost)+' บาท\n\n- ค่าน้ำมันเดิม: '+fmtB(oilC)+' บาท/เดือน\n- ค่าแก๊ส: '+fmtB(gasC)+' บาท/เดือน\n- ประหยัด: '+fmtB(save)+' บาท/เดือน\n- คืนทุน: '+pbT+'\n\nสนใจนัดคิวครับ/ค่ะ'
+    :'กรุณาตรวจสอบข้อมูล';
+}
 function copyMsg(btn){navigator.clipboard.writeText(document.getElementById('msg-box').textContent);btn.textContent='คัดลอกแล้ว';setTimeout(()=>btn.textContent='คัดลอกข้อความส่งเจ้าหน้าที่',2000);}
 calc();
 </script>
